@@ -1,5 +1,5 @@
 const URL_APPS_SCRIPT =
-"https://script.google.com/macros/s/AKfycbwezQl08tljy_mqED3Z_nJAUsSh0uyPpOw2qtrVbAmKchHyPyldXVdOAl5NSNPCzBKPuw/exec";
+"https://script.google.com/macros/s/AKfycbzn81wG11bUhqT4_xCu3soAO3yAo90-HQ31Nv17ccSCsKNCt3gtlzHv5FqtK4NigtKzRA/exec";
 
 let tipe = "";
 let barcode = "";
