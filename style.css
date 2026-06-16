@@ -5,8 +5,8 @@ box-sizing:border-box;
 }
 
 body{
+background:#f4f6f9;
 font-family:Arial,sans-serif;
-background:#f4f4f4;
 padding:20px;
 }
 
@@ -19,7 +19,7 @@ margin:auto;
 background:white;
 padding:20px;
 border-radius:12px;
-box-shadow:0 2px 10px rgba(0,0,0,.1);
+box-shadow:0 4px 12px rgba(0,0,0,.1);
 }
 
 h2{
@@ -28,8 +28,7 @@ margin-bottom:20px;
 }
 
 h3{
-margin-top:20px;
-margin-bottom:10px;
+margin-bottom:15px;
 }
 
 input,
@@ -43,41 +42,49 @@ font-size:16px;
 }
 
 textarea{
-height:80px;
+height:90px;
 resize:none;
 }
 
 button{
 width:100%;
 padding:14px;
-margin-top:12px;
 border:none;
 border-radius:8px;
+margin-top:12px;
 font-size:16px;
 cursor:pointer;
-background:#2563eb;
 color:white;
 }
 
-button:hover{
-opacity:.9;
+.btn-in{
+background:#16a34a;
+}
+
+.btn-out{
+background:#dc2626;
+}
+
+button:not(.btn-in):not(.btn-out){
+background:#2563eb;
 }
 
 .hidden{
 display:none;
 }
 
-.warning{
-background:#fff3cd;
-border-left:5px solid #ffc107;
-padding:10px;
-margin-bottom:10px;
-border-radius:6px;
-}
-
 #reader{
 width:100%;
 margin-top:15px;
-overflow:hidden;
-border-radius:10px;
+}
+
+#stokBarang{
+font-weight:bold;
+color:#2563eb;
+margin-top:10px;
+}
+
+#kategoriBarang{
+color:#666;
+margin-top:5px;
 }
