@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Inventory Scanner</title>
+<title>Inventory Barang</title>
 
 <link rel="stylesheet" href="style.css">
 
@@ -21,9 +21,9 @@
 
 <div class="card">
 
-<h2>Inventory Scanner</h2>
+<h2>Inventory Barang</h2>
 
-<div id="dashboard">
+<div id="stepUser">
 
 <label>Nama Pengguna</label>
 
@@ -32,31 +32,33 @@ type="text"
 id="userName"
 placeholder="Masukkan nama">
 
-<h3>⚠️ Stok Minimum</h3>
-
-<div id="lowStock">
-Memuat data...
-</div>
-
-<button onclick="startMenu()">
-Mulai Scan
+<button onclick="showMenu()">
+Lanjut
 </button>
 
 </div>
 
-<div id="menu" class="hidden">
+<div id="stepMenu" class="hidden">
 
-<button onclick="startScan('IN')">
+<h3>Pilih Transaksi</h3>
+
+<button class="btn-in"
+onclick="startScan('IN')">
+
 📥 Barang Masuk
+
 </button>
 
-<button onclick="startScan('OUT')">
+<button class="btn-out"
+onclick="startScan('OUT')">
+
 📤 Barang Keluar
+
 </button>
 
 </div>
 
-<div id="scanner" class="hidden">
+<div id="stepScanner" class="hidden">
 
 <h3>Scan Barcode</h3>
 
@@ -64,23 +66,25 @@ Mulai Scan
 
 </div>
 
-<div id="formArea" class="hidden">
+<div id="stepForm" class="hidden">
 
 <h3 id="namaBarang"></h3>
+
+<p id="kategoriBarang"></p>
 
 <p id="stokBarang"></p>
 
 <input
 type="number"
 id="qty"
-placeholder="Qty">
+placeholder="Jumlah">
 
 <textarea
 id="keterangan"
 placeholder="Keterangan"></textarea>
 
 <button onclick="saveData()">
-💾 Save
+💾 Simpan
 </button>
 
 </div>
@@ -92,4 +96,5 @@ placeholder="Keterangan"></textarea>
 <script src="app.js"></script>
 
 </body>
+
 </html>
