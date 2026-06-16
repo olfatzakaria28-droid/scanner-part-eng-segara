@@ -1,20 +1,19 @@
 const API_URL =
-"https://script.google.com/macros/s/AKfycbyeZU9NN6tKiCGeV29s9LlpyS_UAlCiDxQ5zEhq_vSvxyjP7uTYxyeEk49G7H4vl1k14A/exec";
+"https://SCRIPT_WEBAPP_URL_ANDA";
 
 let tipe = "";
-let barcode = "";
-let namaBarang = "";
-let stokSaatIni = 0;
+let kode = "";
+let userName = "";
 
-loadLowStock();
+let itemData = {};
 
-async function api(data){
+async function api(payload){
 
 const response = await fetch(
 API_URL,
 {
 method:"POST",
-body:JSON.stringify(data)
+body:JSON.stringify(payload)
 }
 );
 
@@ -22,205 +21,107 @@ return await response.json();
 
 }
 
-async function loadLowStock(){
+function showMenu(){
 
-try{
-
-const items = await api({
-action:"getLowStock"
-});
-
-let html = "";
-
-if(items.length === 0){
-
-html =
-"<div class='warning'>✅ Semua stok aman</div>";
-
-}else{
-
-items.forEach(item=>{
-
-html += `
-
-<div class="warning">
-<b>${item.nama}</b><br>
-Stok : ${item.stok}<br>
-Minimum : ${item.minStok}
-</div>
-`;
-
-});
-
-}
-
-document.getElementById("lowStock").innerHTML =
-html;
-
-}catch(err){
-
-document.getElementById("lowStock").innerHTML =
-"Gagal memuat data";
-
-console.error(err);
-
-}
-
-}
-
-function startMenu(){
-
-const nama =
+userName =
 document.getElementById("userName").value;
 
-if(!nama){
+if(!userName){
 
-alert("Masukkan nama pengguna");
+alert("Masukkan nama");
 
 return;
 
 }
 
 document
-.getElementById("dashboard")
+.getElementById("stepUser")
 .classList.add("hidden");
 
 document
-.getElementById("menu")
+.getElementById("stepMenu")
 .classList.remove("hidden");
 
 }
 
-async function startScan(t){
+async function startScan(transactionType){
 
-  tipe = t;
+tipe = transactionType;
 
-  document
-    .getElementById("menu")
-    .classList.add("hidden");
+document
+.getElementById("stepMenu")
+.classList.add("hidden");
 
-  document
-    .getElementById("scanner")
-    .classList.remove("hidden");
+document
+.getElementById("stepScanner")
+.classList.remove("hidden");
 
-  try{
+try{
 
-    const scanner =
-      new Html5Qrcode("reader");
+const scanner =
+new Html5Qrcode("reader");
 
-    const cameras =
-      await Html5Qrcode.getCameras();
+const cameras =
+await Html5Qrcode.getCameras();
 
-    if(cameras.length === 0){
+if(cameras.length === 0){
 
-      alert("Kamera tidak ditemukan");
+alert("Kamera tidak ditemukan");
 
-      return;
-
-    }
-
-    let selectedCamera = null;
-
-    for(const camera of cameras){
-
-      const label =
-        camera.label.toLowerCase();
-
-      if(
-        label.includes("back") ||
-        label.includes("rear") ||
-        label.includes("environment")
-      ){
-
-        selectedCamera = camera.id;
-
-        break;
-
-      }
-
-    }
-
-    if(!selectedCamera){
-
-      selectedCamera =
-        cameras[cameras.length - 1].id;
-
-    }
-
-    await scanner.start(
-
-      selectedCamera,
-
-      {
-        fps:10,
-        qrbox:250,
-        aspectRatio:1.0
-      },
-
-      async function(decodedText){
-
-        barcode = decodedText;
-
-        await scanner.stop();
-
-        const item =
-          await api({
-            action:"getItem",
-            barcode:barcode
-          });
-
-        if(!item.found){
-
-          alert("Barang tidak ditemukan");
-
-          location.reload();
-
-          return;
-
-        }
-
-        namaBarang = item.nama;
-        stokSaatIni = item.stok;
-
-        document
-          .getElementById("scanner")
-          .classList.add("hidden");
-
-        document
-          .getElementById("formArea")
-          .classList.remove("hidden");
-
-        document
-          .getElementById("namaBarang")
-          .innerHTML = item.nama;
-
-        document
-          .getElementById("stokBarang")
-          .innerHTML =
-            "Stok Saat Ini : " +
-            item.stok;
-
-      }
-
-    );
-
-  }catch(err){
-
-    alert(
-      "Gagal membuka kamera : " +
-      err.message
-    );
-
-    console.error(err);
-
-  }
+return;
 
 }
 
+let selectedCamera = null;
+
+for(const cam of cameras){
+
+const label =
+cam.label.toLowerCase();
+
+if(
+label.includes("back") ||
+label.includes("rear") ||
+label.includes("environment")
+){
+
+selectedCamera = cam.id;
+
+break;
+
+}
+
+}
+
+if(!selectedCamera){
+
+selectedCamera =
+cameras[cameras.length - 1].id;
+
+}
+
+await scanner.start(
+
+selectedCamera,
+
+{
+fps:10,
+qrbox:250
+},
+
+async function(decodedText){
+
+kode = decodedText;
+
+await scanner.stop();
+
 const item =
 await api({
+
 action:"getItem",
-barcode:barcode
+
+kode:kode
+
 });
 
 if(!item.found){
@@ -233,27 +134,35 @@ return;
 
 }
 
-namaBarang = item.nama;
-stokSaatIni = item.stok;
+itemData = item;
 
 document
-.getElementById("scanner")
+.getElementById("stepScanner")
 .classList.add("hidden");
 
 document
-.getElementById("formArea")
+.getElementById("stepForm")
 .classList.remove("hidden");
 
 document
 .getElementById("namaBarang")
-.innerHTML = item.nama;
+.innerHTML =
+item.nama;
+
+document
+.getElementById("kategoriBarang")
+.innerHTML =
+"Kategori : " +
+item.kategori;
 
 document
 .getElementById("stokBarang")
 .innerHTML =
-"Stok Saat Ini : " + item.stok;
+"Stok Saat Ini : " +
+item.stok;
 
 }
+
 );
 
 }catch(err){
@@ -274,53 +183,51 @@ async function saveData(){
 const qty =
 document.getElementById("qty").value;
 
-const ket =
+const keterangan =
 document.getElementById("keterangan").value;
-
-const pic =
-document.getElementById("userName").value;
 
 if(!qty){
 
-alert("Masukkan qty");
+alert("Masukkan jumlah");
 
 return;
 
 }
 
-try{
-
+const result =
 await api({
 
 action:"save",
 
-barcode:barcode,
+kode:kode,
 
-nama:namaBarang,
+nama:itemData.nama,
+
+kategori:itemData.kategori,
 
 qty:qty,
 
-pic:pic,
+pic:userName,
 
-keterangan:ket,
+tipe:tipe,
 
-tipe:tipe
+keterangan:keterangan
 
 });
 
+if(result.success){
+
 alert(
-"Data berhasil disimpan"
+"Data berhasil disimpan\n" +
+"Stok sekarang : " +
+result.stokBaru
 );
 
 location.reload();
 
-}catch(err){
+}else{
 
-alert(
-"Gagal menyimpan data"
-);
-
-console.error(err);
+alert("Gagal menyimpan");
 
 }
 
