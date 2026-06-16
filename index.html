@@ -1,57 +1,89 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="id">
+
 <head>
 
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="stylesheet"
-href="style.css">
+<title>Inventory Scanner</title>
 
-<script src="https://unpkg.com/html5-qrcode"></script>
+<link rel="stylesheet" href="style.css">
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
 </head>
 
 <body>
 
+<div class="container">
+
 <div class="card">
 
 <h2>Inventory Scanner</h2>
 
-<div id="menu">
+<div id="dashboard">
 
-<button onclick="pilih('IN')">
+<label>Nama Pengguna</label>
+
+<input
+type="text"
+id="userName"
+placeholder="Masukkan nama">
+
+<h3>⚠️ Stok Minimum</h3>
+
+<div id="lowStock">
+Memuat data...
+</div>
+
+<button onclick="startMenu()">
+Mulai Scan
+</button>
+
+</div>
+
+<div id="menu" class="hidden">
+
+<button onclick="startScan('IN')">
 📥 Barang Masuk
 </button>
 
-<button onclick="pilih('OUT')">
+<button onclick="startScan('OUT')">
 📤 Barang Keluar
 </button>
 
 </div>
 
-<div id="scanner"
-style="display:none">
+<div id="scanner" class="hidden">
+
+<h3>Scan Barcode</h3>
 
 <div id="reader"></div>
 
 </div>
 
-<div id="form"
-style="display:none">
+<div id="formArea" class="hidden">
 
-<h3 id="nama"></h3>
+<h3 id="namaBarang"></h3>
+
+<p id="stokBarang"></p>
 
 <input
-id="qty"
 type="number"
+id="qty"
 placeholder="Qty">
 
-<br><br>
+<textarea
+id="keterangan"
+placeholder="Keterangan"></textarea>
 
-<button onclick="simpan()">
-💾 Simpan
+<button onclick="saveData()">
+💾 Save
 </button>
+
+</div>
 
 </div>
 
