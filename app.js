@@ -1,58 +1,143 @@
-const URL_APPS_SCRIPT =
-"https://script.google.com/macros/s/AKfycbzn81wG11bUhqT4_xCu3soAO3yAo90-HQ31Nv17ccSCsKNCt3gtlzHv5FqtK4NigtKzRA/exec";
+const API_URL =
+"https://script.google.com/macros/s/AKfycbyeZU9NN6tKiCGeV29s9LlpyS_UAlCiDxQ5zEhq_vSvxyjP7uTYxyeEk49G7H4vl1k14A/exec";
 
 let tipe = "";
 let barcode = "";
-let nama = "";
+let namaBarang = "";
+let stokSaatIni = 0;
 
-function pilih(t){
+loadLowStock();
 
-tipe = t;
+async function api(data){
 
-document.getElementById("menu").style.display="none";
-document.getElementById("scanner").style.display="block";
+const response = await fetch(
+API_URL,
+{
+method:"POST",
+body:JSON.stringify(data)
+}
+);
 
-startScanner();
+return await response.json();
 
 }
 
-function startScanner(){
+async function loadLowStock(){
 
-const html5QrCode =
+try{
+
+const items = await api({
+action:"getLowStock"
+});
+
+let html = "";
+
+if(items.length === 0){
+
+html =
+"<div class='warning'>✅ Semua stok aman</div>";
+
+}else{
+
+items.forEach(item=>{
+
+html += `
+
+<div class="warning">
+<b>${item.nama}</b><br>
+Stok : ${item.stok}<br>
+Minimum : ${item.minStok}
+</div>
+`;
+
+});
+
+}
+
+document.getElementById("lowStock").innerHTML =
+html;
+
+}catch(err){
+
+document.getElementById("lowStock").innerHTML =
+"Gagal memuat data";
+
+console.error(err);
+
+}
+
+}
+
+function startMenu(){
+
+const nama =
+document.getElementById("userName").value;
+
+if(!nama){
+
+alert("Masukkan nama pengguna");
+
+return;
+
+}
+
+document
+.getElementById("dashboard")
+.classList.add("hidden");
+
+document
+.getElementById("menu")
+.classList.remove("hidden");
+
+}
+
+async function startScan(t){
+
+tipe = t;
+
+document
+.getElementById("menu")
+.classList.add("hidden");
+
+document
+.getElementById("scanner")
+.classList.remove("hidden");
+
+try{
+
+const scanner =
 new Html5Qrcode("reader");
 
-html5QrCode.start(
-{ facingMode: "environment" },
+const cameras =
+await Html5Qrcode.getCameras();
+
+if(cameras.length === 0){
+
+alert("Kamera tidak ditemukan");
+
+return;
+
+}
+
+await scanner.start(
+cameras[0].id,
 {
 fps:10,
 qrbox:250
 },
-async(code)=>{
+async function(decodedText){
 
-barcode = code;
+barcode = decodedText;
 
-await html5QrCode.stop();
+await scanner.stop();
 
-cariBarang();
-
-}
-);
-
-}
-
-async function cariBarang(){
-
-const res = await fetch(URL_APPS_SCRIPT,{
-method:"POST",
-body:JSON.stringify({
+const item =
+await api({
 action:"getItem",
 barcode:barcode
-})
 });
 
-const data = await res.json();
-
-if(!data.found){
+if(!item.found){
 
 alert("Barang tidak ditemukan");
 
@@ -62,39 +147,95 @@ return;
 
 }
 
-nama = data.nama;
+namaBarang = item.nama;
+stokSaatIni = item.stok;
 
-document.getElementById("scanner").style.display="none";
-document.getElementById("form").style.display="block";
+document
+.getElementById("scanner")
+.classList.add("hidden");
 
-document.getElementById("nama").innerHTML =
-data.nama;
+document
+.getElementById("formArea")
+.classList.remove("hidden");
+
+document
+.getElementById("namaBarang")
+.innerHTML = item.nama;
+
+document
+.getElementById("stokBarang")
+.innerHTML =
+"Stok Saat Ini : " + item.stok;
+
+}
+);
+
+}catch(err){
+
+alert(
+"Gagal membuka kamera : " +
+err.message
+);
+
+console.error(err);
 
 }
 
-async function simpan(){
+}
+
+async function saveData(){
 
 const qty =
 document.getElementById("qty").value;
 
-const res = await fetch(URL_APPS_SCRIPT,{
-method:"POST",
-body:JSON.stringify({
+const ket =
+document.getElementById("keterangan").value;
+
+const pic =
+document.getElementById("userName").value;
+
+if(!qty){
+
+alert("Masukkan qty");
+
+return;
+
+}
+
+try{
+
+await api({
+
 action:"save",
+
 barcode:barcode,
-nama:nama,
+
+nama:namaBarang,
+
 qty:qty,
+
+pic:pic,
+
+keterangan:ket,
+
 tipe:tipe
-})
+
 });
 
-const data = await res.json();
-
 alert(
-"Berhasil disimpan\nStok sekarang: "
-+ data.stok
+"Data berhasil disimpan"
 );
 
 location.reload();
+
+}catch(err){
+
+alert(
+"Gagal menyimpan data"
+);
+
+console.error(err);
+
+}
 
 }
