@@ -120,10 +120,12 @@ return;
 }
 
 await scanner.start(
-cameras[0].id,
 {
-fps:10,
-qrbox:250
+  facingMode: "environment"
+},
+{
+  fps: 20,
+  qrbox: 200
 },
 async function(decodedText){
 
