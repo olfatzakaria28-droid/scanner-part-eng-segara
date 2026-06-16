@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<link rel="stylesheet"
+href="style.css">
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Inventory Scanner</h2>
+
+<div id="menu">
+
+<button onclick="pilih('IN')">
+📥 Barang Masuk
+</button>
+
+<button onclick="pilih('OUT')">
+📤 Barang Keluar
+</button>
+
+</div>
+
+<div id="scanner"
+style="display:none">
+
+<div id="reader"></div>
+
+</div>
+
+<div id="form"
+style="display:none">
+
+<h3 id="nama"></h3>
+
+<input
+id="qty"
+type="number"
+placeholder="Qty">
+
+<br><br>
+
+<button onclick="simpan()">
+💾 Simpan
+</button>
+
+</div>
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
