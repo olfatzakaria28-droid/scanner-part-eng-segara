@@ -1,5 +1,5 @@
 const API_URL =
-"https://script.google.com/macros/s/AKfycbzJXfcOHM9_QQ5yE0s44uccJr5T1aBipyFV3iKWfKXRU2roZVgxj5tSUOC9_ePNydy8Nw/exec";
+"https://script.google.com/macros/s/AKfycbySSx4AqEDiX_DbI5kt0CDWhZhG5W4RAhJUT1GDqiN15iBSJliTm3nBIEeAfhHT3CF3vg/exec";
 
 let tipe = "";
 let kode = "";
