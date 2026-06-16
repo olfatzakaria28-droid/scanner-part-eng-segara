@@ -1,5 +1,5 @@
 const API_URL =
-"https://SCRIPT_WEBAPP_URL_ANDA";
+"https://script.google.com/macros/s/AKfycbw1LyOjcoa_B6XS21T9rvB2HP13Tz9jDVEUNid8YZoJnTqKdNuIaqFAbOvt0oWoV49c9A/exec";
 
 let tipe = "";
 let kode = "";
