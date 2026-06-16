@@ -93,45 +93,129 @@ document
 
 async function startScan(t){
 
-tipe = t;
+  tipe = t;
 
-document
-.getElementById("menu")
-.classList.add("hidden");
+  document
+    .getElementById("menu")
+    .classList.add("hidden");
 
-document
-.getElementById("scanner")
-.classList.remove("hidden");
+  document
+    .getElementById("scanner")
+    .classList.remove("hidden");
 
-try{
+  try{
 
-const scanner =
-new Html5Qrcode("reader");
+    const scanner =
+      new Html5Qrcode("reader");
 
-const cameras =
-await Html5Qrcode.getCameras();
+    const cameras =
+      await Html5Qrcode.getCameras();
 
-if(cameras.length === 0){
+    if(cameras.length === 0){
 
-alert("Kamera tidak ditemukan");
+      alert("Kamera tidak ditemukan");
 
-return;
+      return;
+
+    }
+
+    let selectedCamera = null;
+
+    for(const camera of cameras){
+
+      const label =
+        camera.label.toLowerCase();
+
+      if(
+        label.includes("back") ||
+        label.includes("rear") ||
+        label.includes("environment")
+      ){
+
+        selectedCamera = camera.id;
+
+        break;
+
+      }
+
+    }
+
+    if(!selectedCamera){
+
+      selectedCamera =
+        cameras[cameras.length - 1].id;
+
+    }
+
+    await scanner.start(
+
+      selectedCamera,
+
+      {
+        fps:10,
+        qrbox:250,
+        aspectRatio:1.0
+      },
+
+      async function(decodedText){
+
+        barcode = decodedText;
+
+        await scanner.stop();
+
+        const item =
+          await api({
+            action:"getItem",
+            barcode:barcode
+          });
+
+        if(!item.found){
+
+          alert("Barang tidak ditemukan");
+
+          location.reload();
+
+          return;
+
+        }
+
+        namaBarang = item.nama;
+        stokSaatIni = item.stok;
+
+        document
+          .getElementById("scanner")
+          .classList.add("hidden");
+
+        document
+          .getElementById("formArea")
+          .classList.remove("hidden");
+
+        document
+          .getElementById("namaBarang")
+          .innerHTML = item.nama;
+
+        document
+          .getElementById("stokBarang")
+          .innerHTML =
+            "Stok Saat Ini : " +
+            item.stok;
+
+      }
+
+    );
+
+  }catch(err){
+
+    alert(
+      "Gagal membuka kamera : " +
+      err.message
+    );
+
+    console.error(err);
+
+  }
 
 }
-
-await scanner.start(
-{
-  facingMode: "environment"
-},
-{
-  fps: 20,
-  qrbox: 200
-},
-async function(decodedText){
-
-barcode = decodedText;
-
-await scanner.stop();
 
 const item =
 await api({
